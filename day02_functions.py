@@ -172,3 +172,5 @@ if __name__ == "__main__":
     print(row_quality_score(1000, 23))
     print(classify_load_size(2_500_000))
     print(summarize_run("dim_customer", 500_000, 12.4))
+
+# Claude link (https://claude.ai/share/f3d8aa79-7611-4713-9c20-d84badc1e290)
