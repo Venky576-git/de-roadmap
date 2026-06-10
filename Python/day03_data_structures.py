@@ -2,8 +2,11 @@
 # %%
 nums = [3, 1, 4, 1, 5, 9, 2, 6]
 
+print(id(nums))
+
 # Add / remove
-nums.append(7)           # add to end
+nums.append(7)
+print(id(nums))           # add to end
 print(nums)
 nums.extend([8, 9])      # add many
 print(nums)
@@ -22,6 +25,7 @@ print(nums)
 
 print(sorted(nums))
 print(sorted(nums, reverse=True))
+# The general syntax of a lambda expression is: lambda parameters: expression
 print(nums.sort(key=lambda x: x % 3)) # Python groups numbers according to their x % 3 value: # sort by a key (very common)
 print(nums)
 
@@ -34,6 +38,8 @@ print(nums[:3])     # first 3
 
 print(nums[-3:])    # last 3
     
+print(nums[3:])     # Ignore 1st Three
+
 print(nums[::-1] )  # reversed
   
 print(nums[::2])    # every other one
@@ -68,8 +74,8 @@ revenue = {
 }
 revenue[("APAC", 2024)]   # 1.2
 # %%
-for name, age in [("Alice", 30), ("Bob", 25)]:
-    print(name, age)
+for name, age, num in [("Alice", 30, 0), ("Bob", 25, 0)]:
+    print(name, age, num)
 
 
 
@@ -107,8 +113,8 @@ row = {"id": 1, "name": "Alice", "amount": 100, "active": False}
 
 # Safe access — no KeyError
 print(row["id"])
-# print(row["missing"])  ## Throws error as "missing" Key is not exists
-print(row.get("missing"))          # None
+#print(row["missing"])  ## Throws error as "missing" Key is not exists
+print(row.get("id2"))          # None
 print(row.get("missing", 0))        # default value
 
 # %%
@@ -352,7 +358,108 @@ sales = [
 apac_reps = {s["rep"] for s in sales if s["region"] == "APAC"}
 emea_reps = {s["rep"] for s in sales if s["region"] == "EMEA"}
 
-# print(apac_reps)
-# print(emea_reps)
+print(apac_reps)
+print(emea_reps)
 
 print(apac_reps - emea_reps)
+
+
+################################# Practuce on 9th June #############################
+# %%
+oltp_orders = [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008]
+warehouse_orders = [1003, 1004, 1005, 1006, 1009, 1010, 1011]
+
+# Problem 1 — Set operations as SQL set ops
+# You're reconciling order IDs between two systems: the OLTP source and the warehouse landing zone. 
+# Some orders are missing on either side.
+
+# Produce, using sets only:
+
+# Orders present in both systems (the SQL INTERSECT)
+print(set(oltp_orders) & set(warehouse_orders))
+
+
+
+# %%
+
+# Orders in OLTP but missing from the warehouse — i.e. 
+# failed/pending loads (EXCEPT / LEFT JOIN … WHERE warehouse IS NULL)
+oltp = set(oltp_orders)
+wh = set(warehouse_orders)
+
+print("EXCEPT:", sorted(oltp - wh))
+
+# %%
+# Orphan orders in the warehouse with no OLTP source (EXCEPT the other way)
+print("EXCEPT:", sorted(wh - oltp))
+
+# %%
+oltp_orders = [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008]
+warehouse_orders = [1003, 1004, 1005, 1006, 1009, 1010, 1011]
+
+# Orders present in exactly one system — not both (symmetric difference,
+#  no direct single-keyword SQL equivalent — it's FULL OUTER JOIN … WHERE one side IS NULL)
+print("EXCEPT:", sorted(oltp ^ wh))
+
+
+# %%
+# The total count of distinct orders across both systems (UNION)
+print("Union (Distinct Count):", len(oltp | wh))
+
+
+# %%
+
+########################## Problem 2 — Composite-key GROUP BY + Top-N
+
+orders = [
+    {"order_id": 1, "region": "North", "category": "Electronics", "amount": 1200},
+    {"order_id": 2, "region": "South", "category": "Electronics", "amount": 800},
+    {"order_id": 3, "region": "North", "category": "Apparel",     "amount": 300},
+    {"order_id": 4, "region": "East",  "category": "Electronics", "amount": 1500},
+    {"order_id": 5, "region": "North", "category": "Electronics", "amount": 600},
+    {"order_id": 6, "region": "South", "category": "Apparel",     "amount": 450},
+    {"order_id": 7, "region": "East",  "category": "Apparel",     "amount": 250},
+    {"order_id": 8, "region": "North", "category": "Electronics", "amount": 900},
+    {"order_id": 9, "region": "South", "category": "Electronics", "amount": 700},
+    {"order_id": 10,"region": "East",  "category": "Electronics", "amount": 1100},
+    {"order_id": 11,"region": "North", "category": "Apparel",     "amount": 350},
+    {"order_id": 12,"region": "South", "category": "Apparel",     "amount": 200},
+]
+
+from collections import defaultdict
+
+# the top 3 (region, category) pairs by total_revenue, as a list of tuples like
+
+stats = defaultdict(lambda: {"total_revenue": 0, "order_count": 0})
+
+
+for s in orders:
+    #totals[(s["region"], s["category"])] += s["amount"]
+    key = (s["region"], s["category"])
+    stats[key]["total_revenue"] += s["amount"]
+    stats[key]["order_count"]   += 1
+
+for agg in stats.values():
+    agg["avg_order_value"] = agg["total_revenue"] / agg["order_count"]
+
+# for (region, category), value in sorted(totals.items(), key=lambda x: x[1], reverse=True):
+#     print(region, category, value)
+
+# top_3 = sorted(totals.items(), key=lambda x: x[1], reverse=True)[:3]
+
+# for (region, category), amount in top_3:
+#     print(region, category, amount)
+
+print(stats.items())
+
+top_3 = sorted(stats.items(),
+               key=lambda kv: kv[1]["total_revenue"],
+               reverse=True)[:3]
+
+for (region, category), agg in top_3:
+    print(f"{region:6} {category:12} "
+          f"total={agg['total_revenue']:>5} "
+          f"count={agg['order_count']} "
+          f"avg={agg['avg_order_value']:.2f}")
+
+
