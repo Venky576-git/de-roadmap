@@ -1,0 +1,23 @@
+[
+  {
+    "region": "North",
+    "category": "Electronics",
+    "total_revenue": 2700.0,
+    "order_count": 3,
+    "avg_order_value": 900.0
+  },
+  {
+    "region": "East",
+    "category": "Electronics",
+    "total_revenue": 2600.0,
+    "order_count": 2,
+    "avg_order_value": 1300.0
+  },
+  {
+    "region": "North",
+    "category": "Apparel",
+    "total_revenue": 350.0,
+    "order_count": 1,
+    "avg_order_value": 350.0
+  }
+]

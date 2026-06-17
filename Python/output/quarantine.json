@@ -1,0 +1,35 @@
+[
+  {
+    "row": {
+      "order_id": "2",
+      "region": "South",
+      "category": "Electronics"
+    },
+    "error": "Missing field 'amount' in row '2'"
+  },
+  {
+    "row": {
+      "order_id": "3",
+      "region": "North",
+      "category": "Apparel"
+    },
+    "error": "Missing field 'amount' in row '3'"
+  },
+  {
+    "row": {
+      "order_id": "6",
+      "region": "South",
+      "category": "Apparel",
+      "amount": "-50"
+    },
+    "error": "Invalid value '-50' for field 'amount' in row '6'"
+  },
+  {
+    "row": {
+      "order_id": "9",
+      "region": "South",
+      "category": "Electronics"
+    },
+    "error": "Missing field 'amount' in row '9'"
+  }
+]

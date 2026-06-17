@@ -1,0 +1,13 @@
+﻿order_id,region,category,amount
+1,North,Electronics,1200
+2,South,Electronics,
+3,North,Apparel,N/A
+4,East,Electronics,1500
+5,North,Electronics,600
+6,South,Apparel,-50
+7,East,"Apparel, Sale",250
+8,North,Electronics,900
+9,South,Electronics,NULL
+10,East,Electronics,1100
+11,North,Apparel,350
+12,South,Apparel,200
