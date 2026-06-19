@@ -1,0 +1,30 @@
+[
+  {
+    "order_id":2,
+    "region":"South",
+    "category":"Electronics",
+    "amount":null,
+    "reason":"missing or null amount"
+  },
+  {
+    "order_id":3,
+    "region":"North",
+    "category":"Apparel",
+    "amount":null,
+    "reason":"missing or null amount"
+  },
+  {
+    "order_id":6,
+    "region":"South",
+    "category":"Apparel",
+    "amount":-50.0,
+    "reason":"negative amount"
+  },
+  {
+    "order_id":9,
+    "region":"South",
+    "category":"Electronics",
+    "amount":null,
+    "reason":"missing or null amount"
+  }
+]
